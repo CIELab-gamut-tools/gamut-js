@@ -1,0 +1,17 @@
+{
+  "name": "gamut",
+  "version": "0.0.1",
+  "description": "Gamut calculations in JS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Euan Smith",
+  "license": "MIT",
+  "devDependencies": {
+    "rollup": "^2.17.1"
+  },
+  "dependencies": {
+    "t-matrix": "^1.0.6"
+  }
+}
