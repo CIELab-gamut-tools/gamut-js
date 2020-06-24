@@ -4,11 +4,14 @@
   "description": "Gamut calculations in JS",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha src/**/*.test.js --require reify"
   },
   "author": "Euan Smith",
   "license": "MIT",
   "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^8.0.1",
+    "reify": "^0.20.12",
     "rollup": "^2.17.1"
   },
   "dependencies": {
