@@ -69,26 +69,30 @@ export function fromTRILAB(g){
       o = mapMany(orig,vert0,(or,v0)=>or-v0),
       e2e1 = cross(edge2, edge1, 2),
       e2o = cross(edge2, o, 2),
-      oe1 = cross(o,edge1, 2),
-      e2oe1 = sum(product(edge2,oe1),null,2);
-    e2e1 = e2e1.get(':',[0,1]);
-    e2o = e2o.get(':',[0,1]);
-    oe1 = oe1.get(':',[0,1]);
+      oe1 = cross(o,edge1, 2);
+
+    //from here, drop down to plain arrays for speed.
+    //these are the arrays to be used in the inner loop
+    let e2oe1 = [...sum(product(edge2,oe1),null,2)];
+    e2e1 = [...e2e1.get(':',[0,1])];
+    e2o = [...e2o.get(':',[0,1])];
+    oe1 = [...oe1.get(':',[0,1])];
+
+    const L = e2oe1.length;
 
     for(let q=0; q<hsteps; q++){
-      let
-        Hmid = (q+0.5)*deltaHue,
-        dir = from([Math.sin(Hmid),Math.cos(Hmid)]),
-
-        idet = mult(e2e1,dir).map(v=>1/v),
-        u = product(mult(e2o,dir),idet),
-        v = product(mult(oe1,dir),idet),
-        t = product(e2oe1,idet),
-        ix = find(mapMany(u,v,t,(u,v,t)=>u>=0 && v>=0 && u+v<=1 && t>=0));
-      if (!ix.length){
-        ix = find(mapMany(u,v,t,(u,v,t)=>u>=0.001 && v>=0.001 && u+v<=1.001 && t>=0));
+      const dat=[];
+      const Hmid = (q+0.5)*deltaHue,
+        ds = Math.sin(Hmid),
+        dc=Math.cos(Hmid);
+      for (let l=0,i=0 ; l<L ; l++,i+=2){
+        const idet = 1/(ds*e2e1[i]+dc*e2e1[i+1]),
+          u = idet * (ds*e2o[i]+dc*e2o[i+1]),
+          v = idet * (ds*oe1[i]+dc*oe1[i+1]),
+          t = idet * e2oe1[l];
+        if (u>=0 && v>=0 && u+v<=1 && t>=0) dat.push([Math.sign(idet), t]);
       }
-      cylmap[p][q]=hcat(idet.get(ix,0).map(v=>Math.sign(v)), t.get(ix,0)).toJSON();
+      cylmap[p][q]=dat;
     }
   }
   g.cylmap = cylmap;
