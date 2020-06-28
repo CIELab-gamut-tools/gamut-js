@@ -1,4 +1,4 @@
-import {from, sum, mult, diag, mapMany, div, grid, reshape, zeros, mcat, rows} from "t-matrix";
+import {from, sum, mult, diag, mapMany, div, grid, reshape, zeros, mcat, rows, hcat} from "t-matrix";
 
 export function* splitLines(iterable){
   if (iterable == null) return;
@@ -75,4 +75,9 @@ export function XYZ2Lab(XYZ, XYZn){
 
 export function find(m){
   return [...m].map((v,i)=>[v,i]).filter(a=>a[0]).map(a=>a[1]);
+}
+
+export function xy2XYZ(xy,Y){
+  const XYZn = from([...rows(xy)].map(([x,y])=>[x/y,1,(1-x-y)/y]));
+  return Y ? product(XYZn,Y) : XYZn;
 }

@@ -55,7 +55,7 @@ export function fromTRILAB(g) {
   const deltaHue = 2 * Math.PI / hsteps;
 
   //quick way of building a 2D array.
-  const cylmap = zeros(Lsteps, hsteps).toJSON();
+  const cylmap = new Array(Lsteps);
 
   for (let p = 0; p < Lsteps; p++) {
     let
@@ -72,33 +72,39 @@ export function fromTRILAB(g) {
       e2o = cross(edge2, o, 2),
       oe1 = cross(o, edge1, 2);
 
-    //from here, drop down to plain arrays for speed.
-    //these are the arrays to be used in the inner loop
-    let e2oe1 = [...sum(product(edge2, oe1), null, 2)];
-    e2e1 = [...e2e1.get(':', [0, 1])];
-    e2o = [...e2o.get(':', [0, 1])];
-    oe1 = [...oe1.get(':', [0, 1])];
-
-    const L = e2oe1.length;
-
-    for (let q = 0; q < hsteps; q++) {
-      const dat = [];
-      const Hmid = (q + 0.5) * deltaHue,
-        ds = Math.sin(Hmid),
-        dc = Math.cos(Hmid);
-      let idet,u,v,t;
-      for (let l = 0, i = 0; l < L; l++, i += 2) {
-        idet = 1 / (ds * e2e1[i] + dc * e2e1[i + 1]);
-        if ( (t = idet * e2oe1[l]) > 0 &&
-          (u = idet * (ds * e2o[i] + dc * e2o[i + 1])) >= 0 &&
-          (v = idet * (ds * oe1[i] + dc * oe1[i + 1])) >= 0 &&
-          u + v <= 1 ) dat.push([Math.sign(idet), t]);
-      }
-      cylmap[p][q] = dat;
-    }
+    //from here, drop down to plain arrays for speed in the inner loop.
+    cylmap[p]=inner(
+      [...e2e1.get(':', [0, 1])],
+      [...e2o.get(':', [0, 1])],
+      [...oe1.get(':', [0, 1])],
+      [...sum(product(edge2, oe1), null, 2)],
+      hsteps,
+      deltaHue
+    );
   }
   g.cylmap = cylmap;
   return g;
+}
+
+function inner(e2e1, e2o, oe1, e2oe1, hsteps, deltaHue) {
+  const L = e2oe1.length;
+  const rtn = new Array(hsteps);
+  for (let q = 0; q < hsteps; q++) {
+    const dat = [];
+    const Hmid = (q + 0.5) * deltaHue,
+      ds = Math.sin(Hmid),
+      dc = Math.cos(Hmid);
+    let idet, u, v, t;
+    for (let l = 0, i = 0; l < L; l++, i += 2) {
+      idet = 1 / (ds * e2e1[i] + dc * e2e1[i + 1]);
+      if ((t = idet * e2oe1[l]) > 0 &&
+        (u = idet * (ds * e2o[i] + dc * e2o[i + 1])) >= 0 &&
+        (v = idet * (ds * oe1[i] + dc * oe1[i + 1])) >= 0 &&
+        u + v <= 1) dat.push([Math.sign(idet), t]);
+    }
+    rtn[q] = dat;
+  }
+  return rtn;
 }
 
 export function gamutVolume(g) {
