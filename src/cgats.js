@@ -36,9 +36,9 @@ export function readCgats(iterable){
           if (idIdx>=0){
             row = values[idIdx];
             if (row<1 || row>count) throw new Error('readCGATS: SampleID outside the range 1..NUMBER_OF_SETS');
-            data.set(row, ':', [values]);
+            data.set(row-1, ':', [values]);
           } else {
-            data.set(row++, ':', [values]);
+            data.set(row++-1, ':', [values]);
           }
         }
         if (row !== count) throw new Error('readCGATS: data rows does not match NUMBER_OF_SETS');

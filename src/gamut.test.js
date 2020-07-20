@@ -7,7 +7,7 @@ describe('fromFIle',function(){
     this.timeout(60000);
     const file = fs.readFileSync('./samples/sRGB.txt','utf-8');
     const g = fromCgats(file);
-    // fs.writeFileSync('./out.json',JSON.stringify(g.cylmap,null,2));
+    fs.writeFileSync('./out.json',JSON.stringify(g,null,2));
     expect(Math.floor(gamutVolume(g))).to.equal(830732);
   })
 })
