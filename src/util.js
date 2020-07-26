@@ -1,4 +1,4 @@
-import {from, sum, mult, diag, mapMany, div, grid, reshape, zeros, mcat, rows, hcat} from "t-matrix";
+import {from, mult, diag, mapMany, div, grid, reshape, zeros, mcat, rows} from "t-matrix";
 
 export function* splitLines(iterable){
   if (iterable == null) return;

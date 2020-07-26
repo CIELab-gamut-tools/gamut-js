@@ -1,5 +1,5 @@
 import {readCgats} from "./cgats";
-import {from, min, max, mult, zeros, cross, product, mapMany, hcat, sum} from 't-matrix';
+import {from, min, max, cross, product, mapMany, sum} from 't-matrix';
 import {camcat_cc, makeTesselation, mapRows, XYZ2Lab, find} from "./util";
 
 export function fromCgats(file, opts) {

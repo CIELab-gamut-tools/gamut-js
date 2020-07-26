@@ -1,0 +1,4 @@
+*
+!dist/bundle.mjs
+!dist/bundle.js
+!index.*

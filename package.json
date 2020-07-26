@@ -1,10 +1,13 @@
 {
-  "name": "gamut",
+  "name": "gamut-tools",
   "version": "0.0.1",
   "description": "Gamut calculations in JS",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "mocha src/**/*.test.js --require reify"
+    "test": "mocha src/**/*.test.js --require reify",
+    "cover": "nyc --reporter=lcov --reporter=text npm test",
+    "coveralls": "npm run cover && nyc report --reporter=text-lcov | coveralls",
+    "build": "rollup -c"
   },
   "author": "Euan Smith",
   "license": "MIT",
@@ -12,7 +15,12 @@
     "chai": "^4.2.0",
     "mocha": "^8.0.1",
     "reify": "^0.20.12",
-    "rollup": "^2.17.1"
+    "coveralls": "^3.1.0",
+    "jsdoc-to-markdown": "^6.0.1",
+    "rollup": "^2.17.1",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-json": "^4.0.0",
+    "rollup-plugin-terser": "^6.1.0"
   },
   "dependencies": {
     "t-matrix": "^1.1.1"
