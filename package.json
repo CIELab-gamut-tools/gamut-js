@@ -1,5 +1,5 @@
 {
-  "name": "gamut-tools",
+  "name": "gamutjs",
   "version": "0.0.1",
   "description": "Gamut calculations in JS",
   "main": "src/index.js",
