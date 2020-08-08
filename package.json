@@ -1,7 +1,7 @@
 {
-  "name": "gamutjs",
+  "name": "@colorgamut/gamutjs",
   "version": "0.0.1",
-  "description": "Gamut calculations in JS",
+  "description": "Colour gamut calculations in JS",
   "main": "index.js",
   "module": "index.mjs",
   "scripts": {
@@ -10,6 +10,14 @@
     "coveralls": "npm run cover && nyc report --reporter=text-lcov | coveralls",
     "build": "rollup -c"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CIELab-gamut-tools/gamut-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CIELab-gamut-tools/gamut-js/issues"
+  },
+  "homepage": "https://github.com/CIELab-gamut-tools/gamut-js#readme",
   "author": "Euan Smith",
   "license": "MIT",
   "devDependencies": {
@@ -25,5 +33,8 @@
   },
   "dependencies": {
     "t-matrix": "^1.1.1"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
   }
 }
