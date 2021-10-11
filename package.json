@@ -1,6 +1,6 @@
 {
   "name": "gamutjs",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Colour gamut calculations in JS",
   "main": "index.js",
   "module": "index.mjs",
