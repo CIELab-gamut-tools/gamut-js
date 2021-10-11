@@ -37,7 +37,7 @@ export function fromTRIXYZ(g) {
   return fromTRILAB(g)
 }
 
-export function fromTRILAB(g) {
+export function _fromTRILAB(g) {
   if (!g.Lsteps) g.Lsteps = 100;
   if (!g.hsteps) g.hsteps = 360;
 
@@ -78,6 +78,82 @@ export function fromTRILAB(g) {
       [...e2o.get(':', [0, 1])],
       [...oe1.get(':', [0, 1])],
       [...sum(product(edge2, oe1), null, 2)],
+      hsteps,
+      deltaHue
+    );
+  }
+  g.cylmap = cylmap;
+  return g;
+}
+
+export function fromTRILAB(g) {
+  if (!g.Lsteps) g.Lsteps = 100;
+  if (!g.hsteps) g.hsteps = 360;
+
+  const {TRI, LAB, Lsteps, hsteps} = g;
+  const tri = new Uint32Array(TRI);
+  const lab = new Float64Array(LAB);
+  const L = tri.length/3;
+  const maxL = new Float64Array(L), minL = new Float64Array(L);
+  for (let i=0,j=0;j<L; j++){
+    const l1 = lab[tri[i++]*3], l2 = lab[tri[i++]*3], l3 = lab[tri[i++]*3];
+    if (l1>l2){
+      if (l2>l3){
+        minL[j]=l3;
+        maxL[j]=l1;
+      } else {
+        minL[j]=l2;
+        maxL[j]=l1>l3?l1:l3;
+      }
+    } else {
+      if (l2>l3){
+        minL[j]=l1>l3?l3:l1;
+        maxL[j]=l2;
+      } else {
+        minL[j]=l1;
+        maxL[j]=l3;
+      }
+    }
+    maxL[j] = Math.max(l1, l2, l3);
+    minL[j] = Math.min(l1, l2, l3);
+  }
+
+  const deltaHue = 2 * Math.PI / hsteps;
+
+  //quick way of building a 2D array.
+  const cylmap = new Array(Lsteps);
+
+  for (let p = 0; p < Lsteps; p++) {
+    const Lmid = (p + 0.5) * 100 / Lsteps;
+    const IX = [];
+    for (let j=0;j<L;j++)
+      if (minL[j] <= Lmid && Lmid < maxL[j]) IX.push(j);
+    const N = IX.length,
+      e2e1 = new Float64Array(N*2),
+      e2o = new Float64Array(N*2),
+      oe1 = new Float64Array(N*2),
+      e2oe1 = new Float64Array(N);
+    for (let k=0, i=0;k<N;k++, i+=2){
+      const j=IX[k]*3, t0=tri[j]*3, t1=tri[j+1]*3, t2=tri[j+2]*3;
+      const v0l=lab[t0], v0a=lab[t0+1], v0b=lab[t0+2];
+      const v1l=lab[t1], v1a=lab[t1+1], v1b=lab[t1+2];
+      const v2l=lab[t2], v2a=lab[t2+1], v2b=lab[t2+2];
+      const e1l=v1l-v0l, e1a=v1a-v0a, e1b=v1b-v0b;
+      const e2l=v2l-v0l, e2a=v2a-v0a, e2b=v2b-v0b;
+      const ol = Lmid-v0l, oa=-v0a, ob=-v0b;
+      e2e1[i]=e2b*e1l-e2l*e1b;
+      e2e1[i+1]=e1a*e2l-e2a*e1l;
+      e2o[i]=e2b*ol-e2l*ob;
+      e2o[i+1]=oa*e2l-e2a*ol;
+      oe1[i]=ob*e1l-ol*e1b;
+      oe1[i+1]=e1a*ol-oa*e1l;
+      e2oe1[k]=e2a*oe1[i]+e2b*oe1[i+1]+e2l*(oa*e1b-e1a*ob);
+    }
+    cylmap[p]=inner(
+      e2e1,
+      e2o,
+      oe1,
+      e2oe1,
       hsteps,
       deltaHue
     );
